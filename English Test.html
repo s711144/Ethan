@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英文單字測驗</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f7f6;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 800px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .button-start {
+            padding: 15px 30px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-bottom: 30px;
+        }
+
+        .button-start:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .question-area {
+            display: none; /* 預設隱藏 */
+            width: 100%;
+        }
+
+        .question-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            text-align: left;
+            flex-wrap: wrap; /* 允許換行 */
+        }
+
+        .question-item label {
+            font-size: 18px;
+            color: #34495e;
+            flex: 1; /* 讓 label 佔據更多空間 */
+            min-width: 150px; /* 最小寬度 */
+            margin-right: 10px;
+        }
+
+        .question-item input[type="text"] {
+            padding: 10px 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            flex: 2; /* 讓輸入框佔據更多空間 */
+            min-width: 200px; /* 最小寬度 */
+        }
+
+        .question-item .feedback {
+            margin-left: 15px;
+            font-weight: bold;
+            font-size: 16px;
+            color: #e74c3c; /* 錯誤預設紅色 */
+            flex-basis: 100%; /* 讓回饋訊息單獨一行 */
+            text-align: left;
+            margin-top: 5px;
+            padding-left: 160px; /* 與 label 對齊 */
+            box-sizing: border-box;
+        }
+
+        .button-submit {
+            padding: 15px 30px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #fff;
+            background-color: #28a745;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 20px;
+            display: none; /* 預設隱藏 */
+        }
+
+        .button-submit:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+        }
+
+        #score-area {
+            margin-top: 30px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            display: none; /* 預設隱藏 */
+        }
+
+        .correct {
+            color: #28a745 !important; /* 正確答案綠色 */
+        }
+    </style>
+</head>
+<body>
+    <h1>英文單字測驗</h1>
+
+    <div class="container">
+        <button id="startButton" class="button-start">English Test</button>
+
+        <div id="questionArea" class="question-area">
+            </div>
+
+        <button id="submitButton" class="button-submit">完成</button>
+
+        <div id="score-area">
+            您的分數：<span id="score">0</span> / 100
+        </div>
+    </div>
+
+    <script>
+        // 將圖片中的單字資料手動輸入成陣列
+        const vocabulary = [
+            { en: "food", zh: "食物", pinyin: "(shí wù)" },
+            { en: "menu", zh: "菜單", pinyin: "(cài dān)" },
+            { en: "coffee", zh: "咖啡", pinyin: "(kā fēi)" },
+            { en: "juice", zh: "果汁", pinyin: "(guǒ zhī)" },
+            { en: "cookie", zh: "餅乾", pinyin: "(bǐng gān)" },
+            { en: "milk", zh: "牛奶", pinyin: "(niú nǎi)" },
+            { en: "pork", zh: "豬肉", pinyin: "(zhū ròu)" },
+            { en: "beef", zh: "牛肉", pinyin: "(niú ròu)" },
+            { en: "snack", zh: "點心", pinyin: "(diǎn xīn)" },
+            { en: "hot dog", zh: "熱狗", pinyin: "(rè gǒu)" },
+            { en: "cake", zh: "蛋糕", pinyin: "(dàn gāo)" },
+            { en: "butter", zh: "奶油", pinyin: "(nǎi yóu)" },
+            { en: "fruit", zh: "水果", pinyin: "(shuǐ guǒ)" },
+            { en: "orange", zh: "柳橙", pinyin: "(liǔ chéng)" },
+            { en: "banana", zh: "香蕉", pinyin: "(xiāng jiāo)" },
+            { en: "rice", zh: "飯", pinyin: "(fàn)" },
+            { en: "salad", zh: "沙拉", pinyin: "(shā lā)" },
+            { en: "candy", zh: "糖果", pinyin: "(táng guǒ)" },
+            { en: "pizza", zh: "比薩", pinyin: "(bǐ sà)" },
+            { en: "cheese", zh: "乳酪", pinyin: "(rǔ lào)" },
+            { en: "dinner", zh: "晚餐", pinyin: "(wǎn cān)" },
+            { en: "lunch", zh: "午餐", pinyin: "(wǔ cān)" },
+            { en: "number", zh: "號碼", pinyin: "(hào mǎ)" },
+            { en: "one", zh: "一", pinyin: "(yī)" },
+            { en: "two", zh: "二", pinyin: "(èr)" },
+            { en: "three", zh: "三", pinyin: "(sān)" },
+            { en: "four", zh: "四", pinyin: "(sì)" },
+            { en: "five", zh: "五", pinyin: "(wǔ)" },
+            { en: "six", zh: "六", pinyin: "(liù)" },
+            { en: "seven", zh: "七", pinyin: "(qī)" },
+            { en: "nine", zh: "九", pinyin: "(jiǔ)" },
+            { en: "ten", zh: "十", pinyin: "(shí)" },
+            { en: "baby", zh: "嬰兒", pinyin: "(yīng ér)" },
+            { en: "sister", zh: "姐妹", pinyin: "(jiě mèi)" },
+            { en: "brother", zh: "兄弟", pinyin: "(xiōng dì)" },
+            { en: "father", zh: "爸爸", pinyin: "(bà ba)" },
+            { en: "mother", zh: "媽媽", pinyin: "(mā ma)" },
+            { en: "friend", zh: "朋友", pinyin: "(péng yǒu)" },
+            { en: "boss", zh: "老闆", pinyin: "(lǎo bǎn)" },
+            { en: "nurse", zh: "護士", pinyin: "(hù shì)" },
+            { en: "robot", zh: "機器人", pinyin: "(jī qì rén)" },
+            { en: "city", zh: "城市", pinyin: "(chéng shì)" },
+            { en: "bank", zh: "銀行", pinyin: "(yín háng)" },
+            { en: "school", zh: "學校", pinyin: "(xué xiào)" },
+            { en: "bookstore", zh: "書店", pinyin: "(shū diàn)" },
+            { en: "shop", zh: "商店", pinyin: "(shāng diàn)" },
+            { en: "hotel", zh: "旅館", pinyin: "(lǚ guǎn)" },
+            { en: "classroom", zh: "教室", pinyin: "(jiào shì)" },
+            { en: "bedroom", zh: "臥室", pinyin: "(wò shì)" },
+            { en: "bathroom", zh: "浴室", pinyin: "(yù shì)" },
+            { en: "garden", zh: "花園", pinyin: "(huā yuán)" },
+            { en: "park", zh: "公園", pinyin: "(gōng yuán)" },
+            { en: "sea", zh: "海", pinyin: "(hǎi)" },
+            { en: "beach", zh: "海灘", pinyin: "(hǎi tān)" },
+            { en: "river", zh: "河流", pinyin: "(hé liú)" },
+            { en: "lake", zh: "湖泊", pinyin: "(hú bó)" },
+            { en: "road", zh: "路", pinyin: "(lù)" },
+            { en: "street", zh: "街道", pinyin: "(jiē dào)" },
+            { en: "grass", zh: "草", pinyin: "(cǎo)" },
+            { en: "flower", zh: "花", pinyin: "(huā)" },
+            { en: "tree", zh: "樹", pinyin: "(shù)" },
+            { en: "color", zh: "顏色", pinyin: "(yán sè)" },
+            { en: "white", zh: "白色", pinyin: "(bái sè)" },
+            { en: "yellow", zh: "黃色", pinyin: "(huáng sè)" },
+            { en: "red", zh: "紅色", pinyin: "(hóng sè)" },
+            { en: "pink", zh: "粉紅色", pinyin: "(fěn hóng sè)" },
+            { en: "green", zh: "綠色", pinyin: "(lǜ sè)" },
+            { en: "brown", zh: "咖啡色", pinyin: "(kā fēi sè)" },
+            { en: "black", zh: "黑色", pinyin: "(hēi sè)" },
+            { en: "blue", zh: "藍色", pinyin: "(lán sè)" },
+            { en: "glass", zh: "玻璃杯", pinyin: "(bō lí bēi)" },
+            { en: "cup", zh: "杯子", pinyin: "(bēi zi)" },
+            { en: "bowl", zh: "碗", pinyin: "(wǎn)" },
+            { en: "dish", zh: "盤子", pinyin: "(pán zi)" },
+            { en: "spoon", zh: "湯匙", pinyin: "(tāng chí)" },
+            { en: "knife", zh: "刀子", pinyin: "(dāo zi)" },
+            { en: "fork", zh: "叉子", pinyin: "(chā zi)" },
+            { en: "desk", zh: "書桌", pinyin: "(shū zhuō)" },
+            { en: "chair", zh: "椅子", pinyin: "(yǐ zi)" },
+            { en: "card", zh: "卡片", pinyin: "(kǎ piàn)" },
+            { en: "bag", zh: "袋子", pinyin: "(dài zi)" },
+            { en: "chalk", zh: "粉筆", pinyin: "(fěn bǐ)" },
+            { en: "marker", zh: "白板筆", pinyin: "(bái bǎn bǐ)" },
+            { en: "school bag", zh: "書包", pinyin: "(shū bāo)" },
+            { en: "eraser", zh: "橡皮擦", pinyin: "(xiàng pí cā)" },
+            { en: "homework", zh: "家庭作業", pinyin: "(jiā tíng zuò yè)" },
+            { en: "window", zh: "窗戶", pinyin: "(chuāng hù)" },
+            { en: "gift", zh: "禮物", pinyin: "(lǐ wù)" },
+            { en: "kite", zh: "風箏", pinyin: "(fēng zhēng)" },
+            { en: "doll", zh: "洋娃娃", pinyin: "(yáng wá wá)" },
+            { en: "book", zh: "書", pinyin: "(shū)" },
+            { en: "body", zh: "身體", pinyin: "(shēn tǐ)" },
+            { en: "nose", zh: "鼻子", pinyin: "(bí zi)" },
+            { en: "ear", zh: "耳朵", pinyin: "(ěr duǒ)" },
+            { en: "eye", zh: "眼睛", pinyin: "(yǎn jīng)" },
+            { en: "face", zh: "臉", pinyin: "(liǎn)" },
+            { en: "leg", zh: "腿", pinyin: "(tuǐ)" },
+            { en: "mouth", zh: "嘴巴", pinyin: "(zuǐ bā)" },
+            { en: "knee", zh: "膝蓋", pinyin: "(xī gài)" },
+            { en: "neck", zh: "頸部", pinyin: "(jǐng bù)" },
+            { en: "finger", zh: "手指", pinyin: "(shǒu zhǐ)" },
+            { en: "hand", zh: "手", pinyin: "(shǒu)" },
+            { en: "head", zh: "頭", pinyin: "(tóu)" },
+            { en: "arm", zh: "手臂", pinyin: "(shǒu bì)" },
+            { en: "skirt", zh: "裙子", pinyin: "(qún zi)" },
+            { en: "dress", zh: "洋裝", pinyin: "(yáng zhuāng)" },
+            { en: "sock", zh: "短襪", pinyin: "(duǎn wà)" },
+            { en: "shirt", zh: "襯衫", pinyin: "(chèn shān)" },
+            { en: "shoe", zh: "鞋子", pinyin: "(xié zi)" },
+            { en: "pants", zh: "褲子", pinyin: "(kù zi)" },
+            { en: "quiz", zh: "小考", pinyin: "(xiǎo kǎo)" },
+            { en: "math", zh: "數學", pinyin: "(shù xué)" },
+            { en: "how", zh: "如何", pinyin: "(rú hé)" },
+            { en: "who", zh: "誰", pinyin: "(shuí)" },
+            { en: "what", zh: "什麼", pinyin: "(shén me)" },
+            { en: "fan", zh: "電風扇", pinyin: "(diàn fēng shàn)" },
+            { en: "radio", zh: "收音機", pinyin: "(shōu yīn jī)" },
+            { en: "piano", zh: "鋼琴", pinyin: "(gāng qín)" },
+            { en: "e-mail", zh: "電子郵件", pinyin: "(diàn zǐ yóu jiàn)" },
+            { en: "story", zh: "故事", pinyin: "(gù shì)" },
+            { en: "song", zh: "歌曲", pinyin: "(gē qǔ)" },
+            { en: "hot", zh: "熱的", pinyin: "(rè de)" },
+            { en: "cool", zh: "涼的", pinyin: "(liáng de)" },
+            { en: "cold", zh: "冷的", pinyin: "(lěng de)" },
+            { en: "warm", zh: "溫暖的", pinyin: "(wēn nuǎn de)" },
+            { en: "sunny", zh: "晴朗的", pinyin: "(qíng lǎng de)" },
+            { en: "clean", zh: "乾淨的", pinyin: "(gān jìng de)" },
+            { en: "dirty", zh: "髒的", pinyin: "(zāng de)" },
+            { en: "sad", zh: "悲傷的", pinyin: "(bēi shāng de)" },
+            { en: "happy", zh: "快樂的", pinyin: "(kuài lè de)" },
+            { en: "sorry", zh: "抱歉的", pinyin: "(bào qiàn de)" },
+            { en: "lazy", zh: "懶惰的", pinyin: "(lǎn duò de)" },
+            { en: "shy", zh: "害羞的", pinyin: "(hài xiū de)" },
+            { en: "sick", zh: "生病的", pinyin: "(shēng bìng de)" },
+            { en: "lucky", zh: "幸運的", pinyin: "(xìng yùn de)" },
+            { en: "cute", zh: "可愛的", pinyin: "(kě ài de)" },
+            { en: "sure", zh: "確定的", pinyin: "(què dìng de)" },
+            { en: "safe", zh: "安全的", pinyin: "(ān quán de)" },
+            { en: "new", zh: "新的", pinyin: "(xīn de)" },
+            { en: "old", zh: "老的", pinyin: "(lǎo de)" },
+            { en: "same", zh: "相同的", pinyin: "(xiāng tóng de)" },
+            { en: "dry", zh: "乾燥的", pinyin: "(gān zào de)" },
+            { en: "short", zh: "短的", pinyin: "(duǎn de)" },
+            { en: "fast", zh: "快的", pinyin: "(kuài de)" },
+            { en: "slow", zh: "慢的", pinyin: "(màn de)" },
+            { en: "late", zh: "遲到", pinyin: "(chí dào)" },
+            { en: "right", zh: "右邊", pinyin: "(yòu biān)" },
+            { en: "left", zh: "左邊", pinyin: "(zuǒ biān)" },
+            { en: "date", zh: "日期", pinyin: "(rì qī)" },
+            { en: "today", zh: "今天", pinyin: "(jīn tiān)" },
+            { en: "Monday", zh: "星期一", pinyin: "(xīng qī yī)" },
+            { en: "Friday", zh: "星期五", pinyin: "(xīng qī wǔ)" },
+            { en: "Sunday", zh: "星期日", pinyin: "(xīng qī rì)" },
+            { en: "all", zh: "全部", pinyin: "(quán bù)" },
+            { en: "buy", zh: "買", pinyin: "(mǎi)" },
+            { en: "cook", zh: "煮", pinyin: "(zhǔ)" },
+            { en: "cry", zh: "哭", pinyin: "(kū)" },
+            { en: "see", zh: "看", pinyin: "(kàn)" },
+            { en: "read", zh: "讀", pinyin: "(dú)" },
+            { en: "name", zh: "名字", pinyin: "(míng zì)" },
+            { en: "play", zh: "玩", pinyin: "(wán)" },
+            { en: "sing", zh: "唱", pinyin: "(chàng)" },
+            { en: "swim", zh: "游泳", pinyin: "(yóu yǒng)" },
+            { en: "dance", zh: "跳舞", pinyin: "(tiào wǔ)" },
+            { en: "jump", zh: "跳", pinyin: "(tiào)" },
+            { en: "run", zh: "跑", pinyin: "(pǎo)" },
+            { en: "kick", zh: "踢", pinyin: "(tī)" },
+            { en: "watch", zh: "看", pinyin: "(kàn)" },
+            { en: "pull", zh: "拉", pinyin: "(lā)" },
+            { en: "push", zh: "推", pinyin: "(tuī)" },
+            { en: "open", zh: "打開", pinyin: "(dǎ kāi)" },
+            { en: "want", zh: "想要", pinyin: "(xiǎng yào)" },
+            { en: "like", zh: "喜歡", pinyin: "(xǐ huān)" },
+            { en: "come", zh: "來", pinyin: "(lái)" },
+            { en: "go", zh: "去", pinyin: "(qù)" },
+            { en: "eat", zh: "吃", pinyin: "(chī)" },
+            { en: "drink", zh: "喝", pinyin: "(hē)" },
+            { en: "sleep", zh: "睡覺", pinyin: "(shuì jiào)" },
+            { en: "walk", zh: "走路", pinyin: "(zǒu lù)" },
+            { en: "birthday", zh: "生日", pinyin: "(shēng rì)" },
+            { en: "morning", zh: "早上", pinyin: "(zǎo shàng)" },
+            { en: "afternoon", zh: "下午", pinyin: "(xià wǔ)" },
+            { en: "evening", zh: "傍晚", pinyin: "(bàng wǎn)" },
+            { en: "night", zh: "夜晚", pinyin: "(yè wǎn)" },
+            { en: "sheep", zh: "綿羊", pinyin: "(mián yáng)" },
+            { en: "mouse", zh: "老鼠", pinyin: "(lǎo shǔ)" },
+            { en: "elephant", zh: "大象", pinyin: "(dà xiàng)" },
+            { en: "rabbit", zh: "兔子", pinyin: "(tù zi)" },
+            { en: "monkey", zh: "猴子", pinyin: "(hóu zi)" },
+            { en: "snake", zh: "蛇", pinyin: "(shé)" },
+            { en: "ant", zh: "螞蟻", pinyin: "(mǎ yǐ)" },
+            { en: "bear", zh: "熊", pinyin: "(xióng)" },
+            { en: "cat", zh: "貓", pinyin: "(māo)" },
+            { en: "fish", zh: "小魚", pinyin: "(xiǎo yú)" },
+            { en: "goat", zh: "山羊", pinyin: "(shān yáng)" },
+            { en: "tiger", zh: "老虎", pinyin: "(lǎo hǔ)" },
+            { en: "lion", zh: "獅子", pinyin: "(shī zi)" },
+            { en: "horse", zh: "馬", pinyin: "(mǎ)" }
+        ];
+
+        let quizWords = []; // 用於存放本次測驗的單字
+        const numberOfQuestions = 10;
+        let score = 0;
+
+        const startButton = document.getElementById('startButton');
+        const questionArea = document.getElementById('questionArea');
+        const submitButton = document.getElementById('submitButton');
+        const scoreArea = document.getElementById('score-area');
+        const scoreDisplay = document.getElementById('score');
+
+        startButton.addEventListener('click', startQuiz);
+        submitButton.addEventListener('click', checkAnswers);
+
+        function startQuiz() {
+            // 重置狀態
+            questionArea.innerHTML = '';
+            score = 0;
+            scoreDisplay.textContent = '0';
+            scoreArea.style.display = 'none';
+            questionArea.style.display = 'block';
+            submitButton.style.display = 'block';
+            startButton.style.display = 'none'; // 開始按鈕隱藏
+
+            // 隨機選取10個單字
+            quizWords = [];
+            const tempVocab = [...vocabulary]; // 複製一份，避免修改原始陣列
+            for (let i = 0; i < numberOfQuestions; i++) {
+                if (tempVocab.length === 0) break; // 防止單字不足
+                const randomIndex = Math.floor(Math.random() * tempVocab.length);
+                quizWords.push(tempVocab.splice(randomIndex, 1)[0]); // 移除已選單字
+            }
+
+            // 生成題目
+            quizWords.forEach((word, index) => {
+                const questionItem = document.createElement('div');
+                questionItem.classList.add('question-item');
+                questionItem.innerHTML = `
+                    <label>
+                        ${index + 1}. ${word.zh} ${word.pinyin}：
+                    </label>
+                    <input type="text" id="word-${index}" data-correct="${word.en.toLowerCase()}" autocomplete="off">
+                    <span id="feedback-${index}" class="feedback"></span>
+                `;
+                questionArea.appendChild(questionItem);
+            });
+        }
+
+        function checkAnswers() {
+            score = 0;
+            quizWords.forEach((word, index) => {
+                const inputElement = document.getElementById(`word-${index}`);
+                const feedbackElement = document.getElementById(`feedback-${index}`);
+                const userAnswer = inputElement.value.trim().toLowerCase();
+                const correctAnswer = word.en.toLowerCase();
+
+                feedbackElement.textContent = ''; // 清除上次的回饋
+                feedbackElement.classList.remove('correct'); // 清除上次的樣式
+
+                if (userAnswer === correctAnswer) {
+                    score += 10;
+                    feedbackElement.textContent = '正確！';
+                    feedbackElement.classList.add('correct');
+                } else {
+                    feedbackElement.textContent = `錯誤，正確答案是：${word.en}`;
+                }
+                inputElement.disabled = true; // 檢查後禁用輸入框
+            });
+
+            scoreDisplay.textContent = score;
+            scoreArea.style.display = 'block';
+            submitButton.style.display = 'none'; // 隱藏完成按鈕
+            startButton.textContent = '重新測驗'; // 將開始按鈕文字改為重新測驗
+            startButton.style.display = 'block'; // 顯示重新測驗按鈕
+        }
+    </script>
+</body>
+</html>
