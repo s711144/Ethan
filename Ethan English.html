@@ -1,0 +1,215 @@
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三年級英文單字學習</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            margin: 0;
+            padding: 15px;
+        }
+        h1 {
+            text-align: center;
+            color: #005a9c;
+            margin-bottom: 30px;
+        }
+        #word-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .word-card {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .word-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+        }
+        .word-header {
+            width: 100%;
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 10px;
+        }
+        .word-number {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #ffffff;
+            background-color: #007bff;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .word-text {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 10px 0 20px 0;
+            text-align: center;
+        }
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            width: 100%;
+        }
+        button {
+            flex-grow: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        .pronounce-btn {
+            background-color: #28a745;
+        }
+        .pronounce-btn:hover {
+            background-color: #218838;
+        }
+        .spell-btn {
+            background-color: #dc3545;
+        }
+        .spell-btn:hover {
+            background-color: #c82333;
+        }
+        #warning {
+            display: none;
+            text-align: center;
+            padding: 15px;
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+            border-radius: 8px;
+            margin: 20px auto;
+            max-width: 600px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>三年級英文單字</h1>
+
+    <div id="warning">
+        <strong>提示：</strong> 您的瀏覽器不支援語音功能。請嘗試更新瀏覽器或使用最新版的 Chrome、Safari。
+    </div>
+
+    <div id="word-container"></div>
+
+    <script>
+        // 檢查瀏覽器是否支援 Web Speech API
+        if (!('speechSynthesis' in window)) {
+            document.getElementById('warning').style.display = 'block';
+            const allButtons = document.querySelectorAll('button');
+            allButtons.forEach(button => button.disabled = true);
+        } else {
+            // 單字列表 (依照圖片順序 1-200)
+            const words = [
+                "food", "menu", "coffee", "juice", "cookie", "milk", "pork", "beef", "snack", "hot dog",
+                "cake", "butter", "fruit", "orange", "banana", "rice", "salad", "candy", "pizza", "cheese",
+                "dinner", "lunch", "number", "one", "two", "three", "four", "five", "six", "seven",
+                "nine", "ten", "baby", "sister", "brother", "father", "mother", "friend", "boss", "nurse",
+                "robot", "city", "bank", "school", "bookstore", "shop", "hotel", "classroom", "bedroom", "bathroom",
+                "garden", "park", "sea", "beach", "river", "lake", "road", "street", "grass", "flower",
+                "tree", "color", "white", "yellow", "red", "pink", "green", "brown", "black", "blue",
+                "glass", "cup", "bowl", "dish", "spoon", "knife", "fork", "desk", "chair", "card",
+                "bag", "chalk", "marker", "school bag", "eraser", "homework", "window", "gift", "kite", "doll",
+                "book", "body", "nose", "ear", "eye", "face", "leg", "mouth", "knee", "neck",
+                "finger", "hand", "head", "arm", "skirt", "dress", "sock", "shirt", "shoe", "pants",
+                "quiz", "math", "how", "who", "what", "fan", "radio", "piano", "e-mail", "story",
+                "song", "hot", "cool", "cold", "warm", "sunny", "taxi", "clean", "dirty", "sad",
+                "happy", "sorry", "lazy", "shy", "sick", "lucky", "cute", "sure", "safe", "new",
+                "old", "same", "dry", "short", "fast", "slow", "late", "right", "left", "date",
+                "today", "Monday", "Friday", "Sunday", "all", "buy", "cook", "cry", "see", "read",
+                "name", "play", "sing", "swim", "dance", "jump", "run", "kick", "watch", "pull",
+                "push", "open", "want", "like", "come", "go", "eat", "drink", "sleep", "walk",
+                "birthday", "morning", "afternoon", "evening", "night", "sheep", "mouse", "elephant", "rabbit", "monkey",
+                "snake", "ant", "bear", "cat", "elf", "fish", "goat", "tiger", "lion", "horse"
+            ];
+
+            const container = document.getElementById('word-container');
+
+            function speak(text, lang = 'en-US', rate = 0.9) {
+                speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = lang;
+                utterance.rate = rate;
+                speechSynthesis.speak(utterance);
+            }
+
+            function spell(word) {
+                speechSynthesis.cancel();
+                const letters = word.replace(/[^a-zA-Z]/g, '').split('');
+                
+                let letterIndex = 0;
+                function speakNextLetter() {
+                    if (letterIndex < letters.length) {
+                        const utterance = new SpeechSynthesisUtterance(letters[letterIndex]);
+                        utterance.lang = 'en-US';
+                        utterance.rate = 0.8;
+                        utterance.onend = () => {
+                            letterIndex++;
+                            setTimeout(speakNextLetter, 120); 
+                        };
+                        speechSynthesis.speak(utterance);
+                    }
+                }
+                speakNextLetter();
+            }
+
+            words.forEach((word, index) => {
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                const wordHeader = document.createElement('div');
+                wordHeader.className = 'word-header';
+                const wordNumber = document.createElement('span');
+                wordNumber.className = 'word-number';
+                wordNumber.textContent = index + 1;
+                const wordText = document.createElement('p');
+                wordText.className = 'word-text';
+                wordText.textContent = word;
+                const buttonContainer = document.createElement('div');
+                buttonContainer.className = 'buttons';
+                const pronounceBtn = document.createElement('button');
+                pronounceBtn.className = 'pronounce-btn';
+                pronounceBtn.textContent = '發音';
+                pronounceBtn.onclick = () => speak(word);
+                const spellBtn = document.createElement('button');
+                spellBtn.className = 'spell-btn';
+                spellBtn.textContent = '拼音';
+                spellBtn.onclick = () => spell(word);
+                wordHeader.appendChild(wordNumber);
+                buttonContainer.appendChild(pronounceBtn);
+                buttonContainer.appendChild(spellBtn);
+                card.appendChild(wordHeader);
+                card.appendChild(wordText);
+                card.appendChild(buttonContainer);
+                container.appendChild(card);
+            });
+        }
+    </script>
+
+</body>
+</html>
