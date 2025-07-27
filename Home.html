@@ -11,41 +11,41 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background-image: linear-gradient(to right top, #d16ba5, #c777b9, #ba83ca, #aa8fd8, #9a9ae1, #8aa7ec, #79b3f4, #69bff8, #52cffe, #41dfff, #46eefa, #5ffbf1);
+            background-color: #FFFFFF; /* 網頁背景色改為白色 */
             margin: 0;
             flex-direction: column;
-            color: #fff;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+            color: #333; /* 文字顏色改為深色以在白色背景上更清晰 */
+            text-shadow: none; /* 移除文字陰影，因為白色背景不需要 */
         }
         .container {
-            background-color: rgba(255, 255, 255, 0.15);
+            background-color: rgba(255, 255, 255, 0.8); /* 容器背景改為半透明白色 */
             padding: 40px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* 陰影調整為淺色 */
+            backdrop-filter: blur(5px); /* 輕微模糊效果 */
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(200, 200, 200, 0.5); /* 邊框顏色調整 */
             text-align: center;
         }
         h1 {
-            color: #fff;
+            color: #333; /* 標題顏色改為深色 */
             margin-bottom: 30px;
             font-size: 2.5em;
             letter-spacing: 1.5px;
         }
         .button-group {
             display: flex;
-            flex-direction: column; /* 讓按鈕垂直排列 */
-            gap: 20px; /* 按鈕之間的間距 */
-            width: 100%; /* 讓按鈕組佔滿容器寬度 */
-            max-width: 400px; /* 限制按鈕組的最大寬度 */
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            max-width: 400px;
             margin: 0 auto;
         }
         .button {
             padding: 18px 30px;
             font-size: 1.2em;
-            color: white;
-            background-color: rgba(0, 0, 0, 0.4);
+            color: white; /* 按鈕文字顏色保持白色 */
+            background-color: #4CAF50; /* 按鈕背景色改為綠色範例 */
             border: none;
             border-radius: 10px;
             cursor: pointer;
@@ -54,14 +54,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* 按鈕陰影調整 */
             font-weight: bold;
             letter-spacing: 0.8px;
         }
         .button:hover {
-            background-color: rgba(0, 0, 0, 0.6);
+            background-color: #45a049; /* 滑鼠懸停時按鈕顏色變深 */
             transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); /* 滑鼠懸停時陰影調整 */
         }
 
         /* 響應式設計 */
@@ -94,7 +94,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Ethan請點擊按鈕，開始英文學習！</h1>
+        <h1>點擊按鈕，開始英文學習！</h1>
         <div class="button-group">
             <a href="https://s711144.github.io/Ethan/EthanEnglish.html" target="_blank" class="button">English 200單</a>
             <a href="https://s711144.github.io/Ethan/English%20Test-10.html" target="_blank" class="button">English Test - 10個單字</a>
