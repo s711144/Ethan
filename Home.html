@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethan's English Website</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .button {
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            text-decoration: none; /* 移除連結下劃線 */
+            display: inline-block; /* 讓 padding 和 width 生效 */
+        }
+
+        .button.yahoo {
+            background-color: #7b0099; /* Yahoo 紫色 */
+        }
+
+        .button.yahoo:hover {
+            background-color: #5c007a;
+            transform: translateY(-2px);
+        }
+
+        .button.google {
+            background-color: #4285F4; /* Google 藍色 */
+        }
+
+        .button.google:hover {
+            background-color: #357ae8;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <h1>點擊下方按鈕前往您想造訪的網站</h1>
+    <div class="button-container">
+        <a href="https://s711144.github.io/Ethan/EthanEnglish.html" target="_blank" class="button English">English</a>
+        <a href="https://www.google.com/" target="_blank" class="button google">Google</a>
+    </div>
+</body>
+</html>
