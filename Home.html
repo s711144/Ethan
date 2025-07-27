@@ -3,76 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的常用連結</title>
+    <title>我的英文學習連結</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background-color: #f0f2f5;
+            background-image: linear-gradient(to right top, #d16ba5, #c777b9, #ba83ca, #aa8fd8, #9a9ae1, #8aa7ec, #79b3f4, #69bff8, #52cffe, #41dfff, #46eefa, #5ffbf1);
             margin: 0;
-            flex-direction: column; /* 讓按鈕垂直排列 */
+            flex-direction: column;
+            color: #fff;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
         }
-        .button-container {
+        .container {
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            text-align: center;
+        }
+        h1 {
+            color: #fff;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            letter-spacing: 1.5px;
+        }
+        .button-group {
             display: flex;
-            flex-wrap: wrap; /* 讓按鈕在小螢幕上換行 */
+            flex-direction: column; /* 讓按鈕垂直排列 */
             gap: 20px; /* 按鈕之間的間距 */
-            justify-content: center;
-            padding: 20px;
+            width: 100%; /* 讓按鈕組佔滿容器寬度 */
+            max-width: 400px; /* 限制按鈕組的最大寬度 */
+            margin: 0 auto;
         }
         .button {
-            padding: 15px 30px;
-            font-size: 20px;
+            padding: 18px 30px;
+            font-size: 1.2em;
             color: white;
+            background-color: rgba(0, 0, 0, 0.4);
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
-            text-decoration: none; /* 移除連結下劃線 */
-            transition: background-color 0.3s ease;
+            text-decoration: none;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-width: 150px; /* 最小寬度 */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 陰影效果 */
-        }
-        .button.English-200單 {
-            background-color: #430297;
-        }
-        .button.English Test-10個單字 {
-            background-color: #FF0000;
-        }
-        .button.English Test-20個單字 {
-            background-color: #00BB00;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+            letter-spacing: 0.8px;
         }
         .button:hover {
-            opacity: 0.9;
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 40px;
-            text-align: center;
+            background-color: rgba(0, 0, 0, 0.6);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
         }
 
         /* 響應式設計 */
-        @media (max-width: 600px) {
-            .button-container {
-                flex-direction: column; /* 小螢幕下垂直排列 */
-                align-items: center;
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+            h1 {
+                font-size: 2em;
             }
             .button {
-                width: 80%; /* 小螢幕下按鈕寬度 */
+                font-size: 1em;
+                padding: 15px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 15px;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            .button-group {
+                gap: 15px;
             }
         }
     </style>
 </head>
 <body>
-    <h1>點擊下方按鈕前往常用網站</h1>
-    <div class="button-container">
-        <a href="https://s711144.github.io/Ethan/EthanEnglish.html" target="_blank" class="button English-200單">English-200單</a>
-        <a href="https://s711144.github.io/Ethan/English%20Test-10.html" target="_blank" class="button English Test-10個單字">English Test-10個單字</a>
-        <a href="https://s711144.github.io/Ethan/English%20Test-20.html" target="_blank" class="button English Test-20個單字">English Test-20個單字</a>
+    <div class="container">
+        <h1>點擊按鈕，開始英文學習！</h1>
+        <div class="button-group">
+            <a href="https://s711144.github.io/Ethan/EthanEnglish.html" target="_blank" class="button">English 200單</a>
+            <a href="https://s711144.github.io/Ethan/English%20Test-10.html" target="_blank" class="button">English Test - 10個單字</a>
+            <a href="https://s711144.github.io/Ethan/English%20Test-20.html" target="_blank" class="button">English Test - 20個單字</a>
+        </div>
     </div>
 </body>
 </html>
