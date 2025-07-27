@@ -1,68 +1,438 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>多媒體網頁</title>
+    <title>三年級英文單字表</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: #f0f2f5;
+        :root {
+            --primary-bg: #f0f8ff;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --primary-color: #007bff;
+            --secondary-color: #5a6268;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --border-color: #e0e0e0;
         }
-
-        h1 {
-            color: #333;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
             margin-bottom: 30px;
         }
-
-        .button-container {
-            display: flex;
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+        }
+        .word-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
         }
-
-        .button {
-            padding: 15px 30px;
-            font-size: 18px;
+        .word-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+        .word-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px var(--shadow-color);
+        }
+        .word-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .word-info .english {
+            font-size: 1.8rem;
             font-weight: bold;
-            color: #fff;
+            color: var(--primary-color);
+            margin: 0;
+        }
+        .word-info .chinese {
+            font-size: 1.1rem;
+            color: #555;
+            margin: 5px 0 0 0;
+        }
+        .word-info .bopomofo {
+            font-size: 1rem;
+            color: #777;
+            margin: 0;
+        }
+        .word-index {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+            opacity: 0.5;
+        }
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: auto; /* Push buttons to the bottom */
+        }
+        .btn {
+            flex-grow: 1;
+            padding: 12px 15px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            text-decoration: none; /* 移除連結下劃線 */
-            display: inline-block; /* 讓 padding 和 width 生效 */
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.2s, transform 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn:active {
+            transform: scale(0.97);
+        }
+        .pronounce-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .pronounce-btn:hover {
+            background-color: #0056b3;
+        }
+        .spell-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+        .spell-btn:hover {
+            background-color: #5a6268;
         }
 
-        .button.yahoo {
-            background-color: #7b0099; /* Yahoo 紫色 */
-        }
-
-        .button.yahoo:hover {
-            background-color: #5c007a;
-            transform: translateY(-2px);
-        }
-
-        .button.google {
-            background-color: #4285F4; /* Google 藍色 */
-        }
-
-        .button.google:hover {
-            background-color: #357ae8;
-            transform: translateY(-2px);
+        /* Responsive Design for smaller screens (iPhones, iPads) */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            .word-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>點擊下方按鈕前往您想造訪的網站</h1>
-    <div class="button-container">
-        <a href="https://www.yahoo.com/" target="_blank" class="button yahoo">Yahoo</a>
-        <a href="https://www.google.com/" target="_blank" class="button google">Google</a>
+
+    <div class="container">
+        <header>
+            <h1>三年級英文單字學習</h1>
+        </header>
+        <main>
+            <div id="word-grid" class="word-grid">
+                </div>
+        </main>
     </div>
+
+    <script>
+        const words = [
+            { id: 1, en: "food", zh: "食物", bopomofo: "ㄕˊ ㄨˋ" },
+            { id: 2, en: "menu", zh: "菜單", bopomofo: "ㄘㄞˋ ㄉㄢ" },
+            { id: 3, en: "coffee", zh: "咖啡", bopomofo: "ㄎㄚ ㄈㄟ" },
+            { id: 4, en: "juice", zh: "果汁", bopomofo: "ㄍㄨㄛˇ ㄓ" },
+            { id: 5, en: "cookie", zh: "餅乾", bopomofo: "ㄅㄧㄥˇ ㄍㄢ" },
+            { id: 6, en: "milk", zh: "牛奶", bopomofo: "ㄋㄧㄡˊ ㄋㄞˇ" },
+            { id: 7, en: "pork", zh: "豬肉", bopomofo: "ㄓㄨ ㄖㄡˋ" },
+            { id: 8, en: "beef", zh: "牛肉", bopomofo: "ㄋㄧㄡˊ ㄖㄡˋ" },
+            { id: 9, en: "snack", zh: "點心", bopomofo: "ㄉㄧㄢˇ ㄒㄧㄣ" },
+            { id: 10, en: "hot dog", zh: "熱狗", bopomofo: "ㄖㄜˋ ㄍㄡˇ" },
+            { id: 11, en: "cake", zh: "蛋糕", bopomofo: "ㄉㄢˋ ㄍㄠ" },
+            { id: 12, en: "butter", zh: "奶油", bopomofo: "ㄋㄞˇ ㄧㄡˊ" },
+            { id: 13, en: "fruit", zh: "水果", bopomofo: "ㄕㄨㄟˇ ㄍㄨㄛˇ" },
+            { id: 14, en: "orange", zh: "柳橙", bopomofo: "ㄌㄧㄡˇ ㄔㄥˊ" },
+            { id: 15, en: "banana", zh: "香蕉", bopomofo: "ㄒㄧㄤ ㄐㄧㄠ" },
+            { id: 16, en: "rice", zh: "飯", bopomofo: "ㄈㄢˋ" },
+            { id: 17, en: "salad", zh: "沙拉", bopomofo: "ㄕㄚ ㄌㄚ" },
+            { id: 18, en: "candy", zh: "糖果", bopomofo: "ㄊㄤˊ ㄍㄨㄛˇ" },
+            { id: 19, en: "pizza", zh: "比薩", bopomofo: "ㄅㄧˇ ㄙㄚˋ" },
+            { id: 20, en: "cheese", zh: "乳酪", bopomofo: "ㄖㄨˇ ㄌㄨㄛˋ" },
+            { id: 21, en: "dinner", zh: "晚餐", bopomofo: "ㄨㄢˇ ㄘㄢ" },
+            { id: 22, en: "lunch", zh: "午餐", bopomofo: "ㄨˇ ㄘㄢ" },
+            { id: 23, en: "number", zh: "號碼", bopomofo: "ㄏㄠˋ ㄇㄚˇ" },
+            { id: 24, en: "one", zh: "一", bopomofo: "ㄧ" },
+            { id: 25, en: "two", zh: "二", bopomofo: "ㄦˋ" },
+            { id: 26, en: "three", zh: "三", bopomofo: "ㄙㄢ" },
+            { id: 27, en: "four", zh: "四", bopomofo: "ㄙˋ" },
+            { id: 28, en: "five", zh: "五", bopomofo: "ㄨˇ" },
+            { id: 29, en: "six", zh: "六", bopomofo: "ㄌㄧㄡˋ" },
+            { id: 30, en: "seven", zh: "七", bopomofo: "ㄑㄧ" },
+            { id: 31, en: "nine", zh: "九", bopomofo: "ㄐㄧㄡˇ" },
+            { id: 32, en: "ten", zh: "十", bopomofo: "ㄕˊ" },
+            { id: 33, en: "baby", zh: "嬰兒", bopomofo: "ㄧㄥ ㄦˊ" },
+            { id: 34, en: "sister", zh: "姐妹", bopomofo: "ㄐㄧㄝˇ ㄇㄟˋ" },
+            { id: 35, en: "brother", zh: "兄弟", bopomofo: "ㄒㄩㄥ ㄉㄧˋ" },
+            { id: 36, en: "father", zh: "爸爸", bopomofo: "ㄅㄚˋ ㄅㄚ˙" },
+            { id: 37, en: "mother", zh: "媽媽", bopomofo: "ㄇㄚ ㄇㄚ˙" },
+            { id: 38, en: "friend", zh: "朋友", bopomofo: "ㄆㄥˊ ㄧㄡˇ" },
+            { id: 39, en: "boss", zh: "老闆", bopomofo: "ㄌㄠˇ ㄅㄢˇ" },
+            { id: 40, en: "nurse", zh: "護士", bopomofo: "ㄏㄨˋ ㄕˋ" },
+            { id: 41, en: "robot", zh: "機器人", bopomofo: "ㄐㄧ ㄑㄧˋ ㄖㄣˊ" },
+            { id: 42, en: "city", zh: "城市", bopomofo: "ㄔㄥˊ ㄕˋ" },
+            { id: 43, en: "bank", zh: "銀行", bopomofo: "ㄧㄣˊ ㄏㄤˊ" },
+            { id: 44, en: "school", zh: "學校", bopomofo: "ㄒㄩㄝˊ ㄒㄧㄠˋ" },
+            { id: 45, en: "bookstore", zh: "書店", bopomofo: "ㄕㄨ ㄉㄧㄢˋ" },
+            { id: 46, en: "shop", zh: "商店", bopomofo: "ㄕㄤ ㄉㄧㄢˋ" },
+            { id: 47, en: "hotel", zh: "旅館", bopomofo: "ㄌㄩˇ ㄍㄨㄢˇ" },
+            { id: 48, en: "classroom", zh: "教室", bopomofo: "ㄐㄧㄠˋ ㄕˋ" },
+            { id: 49, en: "bedroom", zh: "臥室", bopomofo: "ㄨㄛˋ ㄕˋ" },
+            { id: 50, en: "bathroom", zh: "浴室", bopomofo: "ㄩˋ ㄕˋ" },
+            { id: 51, en: "garden", zh: "花園", bopomofo: "ㄏㄨㄚ ㄩㄢˊ" },
+            { id: 52, en: "park", zh: "公園", bopomofo: "ㄍㄨㄥ ㄩㄢˊ" },
+            { id: 53, en: "sea", zh: "海、海洋", bopomofo: "ㄏㄞˇ、ㄏㄞˇ ㄧㄤˊ" },
+            { id: 54, en: "beach", zh: "海灘", bopomofo: "ㄏㄞˇ ㄊㄢ" },
+            { id: 55, en: "river", zh: "河流", bopomofo: "ㄏㄜˊ ㄌㄧㄡˊ" },
+            { id: 56, en: "lake", zh: "湖泊", bopomofo: "ㄏㄨˊ ㄆㄛˋ" },
+            { id: 57, en: "road", zh: "路", bopomofo: "ㄌㄨˋ" },
+            { id: 58, en: "street", zh: "街道", bopomofo: "ㄐㄧㄝ ㄉㄠˋ" },
+            { id: 59, en: "grass", zh: "草", bopomofo: "ㄘㄠˇ" },
+            { id: 60, en: "flower", zh: "花", bopomofo: "ㄏㄨㄚ" },
+            { id: 61, en: "tree", zh: "樹", bopomofo: "ㄕㄨˋ" },
+            { id: 62, en: "color", zh: "顏色", bopomofo: "ㄧㄢˊ ㄙㄜˋ" },
+            { id: 63, en: "white", zh: "白色", bopomofo: "ㄅㄞˊ ㄙㄜˋ" },
+            { id: 64, en: "yellow", zh: "黃色", bopomofo: "ㄏㄨㄤˊ ㄙㄜˋ" },
+            { id: 65, en: "red", zh: "紅色", bopomofo: "ㄏㄨㄥˊ ㄙㄜˋ" },
+            { id: 66, en: "pink", zh: "粉紅色", bopomofo: "ㄈㄣˇ ㄏㄨㄥˊ ㄙㄜˋ" },
+            { id: 67, en: "green", zh: "綠色", bopomofo: "ㄌㄩˋ ㄙㄜˋ" },
+            { id: 68, en: "brown", zh: "咖啡色", bopomofo: "ㄎㄚ ㄈㄟ ㄙㄜˋ" },
+            { id: 69, en: "black", zh: "黑色", bopomofo: "ㄏㄟ ㄙㄜˋ" },
+            { id: 70, en: "blue", zh: "藍色", bopomofo: "ㄌㄢˊ ㄙㄜˋ" },
+            { id: 71, en: "glass", zh: "玻璃杯", bopomofo: "ㄅㄛ ㄌㄧˊ ㄅㄟ" },
+            { id: 72, en: "cup", zh: "杯子", bopomofo: "ㄅㄟ ㄗ˙" },
+            { id: 73, en: "bowl", zh: "碗", bopomofo: "ㄨㄢˇ" },
+            { id: 74, en: "dish", zh: "盤子", bopomofo: "ㄆㄢˊ ㄗ˙" },
+            { id: 75, en: "spoon", zh: "湯匙", bopomofo: "ㄊㄤ ㄔˊ" },
+            { id: 76, en: "knife", zh: "刀子", bopomofo: "ㄉㄠ ㄗ˙" },
+            { id: 77, en: "fork", zh: "叉子", bopomofo: "ㄔㄚ ㄗ˙" },
+            { id: 78, en: "desk", zh: "書桌", bopomofo: "ㄕㄨ ㄓㄨㄛ" },
+            { id: 79, en: "chair", zh: "椅子", bopomofo: "ㄧˇ ㄗ˙" },
+            { id: 80, en: "card", zh: "卡片", bopomofo: "ㄎㄚˇ ㄆㄧㄢˋ" },
+            { id: 81, en: "bag", zh: "袋子", bopomofo: "ㄉㄞˋ ㄗ˙" },
+            { id: 82, en: "chalk", zh: "粉筆", bopomofo: "ㄈㄣˇ ㄅㄧˇ" },
+            { id: 83, en: "marker", zh: "白板筆", bopomofo: "ㄅㄞˊ ㄅㄢˇ ㄅㄧˇ" },
+            { id: 84, en: "school bag", zh: "書包", bopomofo: "ㄕㄨ ㄅㄠ" },
+            { id: 85, en: "eraser", zh: "橡皮擦", bopomofo: "ㄒㄧㄤˋ ㄆㄧˊ ㄘㄚ" },
+            { id: 86, en: "homework", zh: "家庭作業", bopomofo: "ㄐㄧㄚ ㄊㄧㄥˊ ㄗㄨㄛˋ ㄧㄝˋ" },
+            { id: 87, en: "window", zh: "窗戶", bopomofo: "ㄔㄨㄤ ㄏㄨˋ" },
+            { id: 88, en: "gift", zh: "禮物", bopomofo: "ㄌㄧˇ ㄨˋ" },
+            { id: 89, en: "kite", zh: "風箏", bopomofo: "ㄈㄥ ㄓㄥ" },
+            { id: 90, en: "doll", zh: "洋娃娃", bopomofo: "ㄧㄤˊ ㄨㄚˊ ㄨㄚˊ" },
+            { id: 91, en: "book", zh: "書", bopomofo: "ㄕㄨ" },
+            { id: 92, en: "body", zh: "身體", bopomofo: "ㄕㄣ ㄊㄧˇ" },
+            { id: 93, en: "nose", zh: "鼻子", bopomofo: "ㄅㄧˊ ㄗ˙" },
+            { id: 94, en: "ear", zh: "耳朵", bopomofo: "ㄦˇ ㄉㄨㄛˇ" },
+            { id: 95, en: "eye", zh: "眼睛", bopomofo: "ㄧㄢˇ ㄐㄧㄥ" },
+            { id: 96, en: "face", zh: "臉", bopomofo: "ㄌㄧㄢˇ" },
+            { id: 97, en: "leg", zh: "腿", bopomofo: "ㄊㄨㄟˇ" },
+            { id: 98, en: "mouth", zh: "嘴巴", bopomofo: "ㄗㄨㄟˇ ㄅㄚ" },
+            { id: 99, en: "knee", zh: "膝蓋", bopomofo: "ㄒㄧ ㄍㄞˋ" },
+            { id: 100, en: "neck", zh: "頸部", bopomofo: "ㄐㄧㄥˇ ㄅㄨˋ" },
+            { id: 101, en: "finger", zh: "手指", bopomofo: "ㄕㄡˇ ㄓˇ" },
+            { id: 102, en: "hand", zh: "手", bopomofo: "ㄕㄡˇ" },
+            { id: 103, en: "head", zh: "頭", bopomofo: "ㄊㄡˊ" },
+            { id: 104, en: "arm", zh: "手臂", bopomofo: "ㄕㄡˇ ㄅㄧˋ" },
+            { id: 105, en: "skirt", zh: "裙子", bopomofo: "ㄑㄩㄣˊ ㄗ˙" },
+            { id: 106, en: "dress", zh: "洋裝", bopomofo: "ㄧㄤˊ ㄓㄨㄤ" },
+            { id: 107, en: "sock", zh: "短襪", bopomofo: "ㄉㄨㄢˇ ㄨㄚˋ" },
+            { id: 108, en: "shirt", zh: "襯衫", bopomofo: "ㄔㄣˋ ㄕㄢ" },
+            { id: 109, en: "shoe", zh: "鞋子", bopomofo: "ㄒㄧㄝˊ ㄗ˙" },
+            { id: 110, en: "pants", zh: "褲子", bopomofo: "ㄎㄨˋ ㄗ˙" },
+            { id: 111, en: "quiz", zh: "小考", bopomofo: "ㄒㄧㄠˇ ㄎㄠˇ" },
+            { id: 112, en: "math", zh: "數學", bopomofo: "ㄕㄨˋ ㄒㄩㄝˊ" },
+            { id: 113, en: "how", zh: "如何", bopomofo: "ㄖㄨˊ ㄏㄜˊ" },
+            { id: 114, en: "who", zh: "誰", bopomofo: "ㄕㄟˊ" },
+            { id: 115, en: "what", zh: "什麼", bopomofo: "ㄕㄣˊ ㄇㄜ˙" },
+            { id: 116, en: "fan", zh: "電風扇", bopomofo: "ㄉㄧㄢˋ ㄈㄥ ㄕㄢˋ" },
+            { id: 117, en: "radio", zh: "收音機", bopomofo: "ㄕㄡ ㄧㄣ ㄐㄧ" },
+            { id: 118, en: "piano", zh: "鋼琴", bopomofo: "ㄍㄤ ㄑㄧㄣˊ" },
+            { id: 119, en: "e-mail", zh: "電子郵件", bopomofo: "ㄉㄧㄢˋ ㄗˇ ㄧㄡˊ ㄐㄧㄢˋ" },
+            { id: 120, en: "story", zh: "故事", bopomofo: "ㄍㄨˋ ㄕˋ" },
+            { id: 121, en: "song", zh: "歌曲", bopomofo: "ㄍㄜ ㄑㄩˇ" },
+            { id: 122, en: "hot", zh: "熱的", bopomofo: "ㄖㄜˋ ㄉㄜ˙" },
+            { id: 123, en: "cool", zh: "涼的", bopomofo: "ㄌㄧㄤˊ ㄉㄜ˙" },
+            { id: 124, en: "cold", zh: "冷的", bopomofo: "ㄌㄥˇ ㄉㄜ˙" },
+            { id: 125, en: "warm", zh: "溫暖的", bopomofo: "ㄨㄣ ㄋㄨㄢˇ ㄉㄜ˙" },
+            { id: 126, en: "sunny", zh: "晴朗的", bopomofo: "ㄑㄧㄥˊ ㄌㄤˇ ㄉㄜ˙" },
+            { id: 127, en: "taxi", zh: "計程車", bopomofo: "ㄐㄧˋ ㄔㄥˊ ㄔㄜ" },
+            { id: 128, en: "clean", zh: "乾淨的", bopomofo: "ㄍㄢ ㄐㄧㄥˋ ㄉㄜ˙" },
+            { id: 129, en: "dirty", zh: "髒的", bopomofo: "ㄗㄤ ㄉㄜ˙" },
+            { id: 130, en: "sad", zh: "悲傷的", bopomofo: "ㄅㄟ ㄕㄤ ㄉㄜ˙" },
+            { id: 131, en: "happy", zh: "快樂的", bopomofo: "ㄎㄨㄞˋ ㄌㄜˋ ㄉㄜ˙" },
+            { id: 132, en: "sorry", zh: "抱歉的", bopomofo: "ㄅㄠˋ ㄑㄧㄢˋ ㄉㄜ˙" },
+            { id: 133, en: "lazy", zh: "懶惰的", bopomofo: "ㄌㄢˇ ㄉㄨㄛˋ ㄉㄜ˙" },
+            { id: 134, en: "shy", zh: "害羞的", bopomofo: "ㄏㄞˋ ㄒㄧㄡ ㄉㄜ˙" },
+            { id: 135, en: "sick", zh: "生病的", bopomofo: "ㄕㄥ ㄅㄧㄥˋ ㄉㄜ˙" },
+            { id: 136, en: "lucky", zh: "幸運的", bopomofo: "ㄒㄧㄥˋ ㄩㄣˋ ㄉㄜ˙" },
+            { id: 137, en: "cute", zh: "可愛的", bopomofo: "ㄎㄜˇ ㄞˋ ㄉㄜ˙" },
+            { id: 138, en: "sure", zh: "確定的", bopomofo: "ㄑㄩㄝˋ ㄉㄧㄥˋ ㄉㄜ˙" },
+            { id: 139, en: "safe", zh: "安全的", bopomofo: "ㄢ ㄑㄩㄢˊ ㄉㄜ˙" },
+            { id: 140, en: "new", zh: "新的", bopomofo: "ㄒㄧㄣ ㄉㄜ˙" },
+            { id: 141, en: "old", zh: "老的、舊的", bopomofo: "ㄌㄠˇ ㄉㄜ˙、ㄐㄧㄡˋ ㄉㄜ˙" },
+            { id: 142, en: "same", zh: "相同的", bopomofo: "ㄒㄧㄤ ㄊㄨㄥˊ ㄉㄜ˙" },
+            { id: 143, en: "dry", zh: "乾燥的", bopomofo: "ㄍㄢ ㄗㄠˋ ㄉㄜ˙" },
+            { id: 144, en: "short", zh: "矮的、短的", bopomofo: "ㄞˇ ㄉㄜ˙、ㄉㄨㄢˇ ㄉㄜ˙" },
+            { id: 145, en: "fast", zh: "快的", bopomofo: "ㄎㄨㄞˋ ㄉㄜ˙" },
+            { id: 146, en: "slow", zh: "慢的", bopomofo: "ㄇㄢˋ ㄉㄜ˙" },
+            { id: 147, en: "late", zh: "遲到", bopomofo: "ㄔˊ ㄉㄠˋ" },
+            { id: 148, en: "right", zh: "右邊", bopomofo: "ㄧㄡˋ ㄅㄧㄢ" },
+            { id: 149, en: "left", zh: "左邊", bopomofo: "ㄗㄨㄛˇ ㄅㄧㄢ" },
+            { id: 150, en: "date", zh: "日期", bopomofo: "ㄖˋ ㄑㄧˊ" },
+            { id: 151, en: "today", zh: "今天", bopomofo: "ㄐㄧㄣ ㄊㄧㄢ" },
+            { id: 152, en: "Monday", zh: "星期一", bopomofo: "ㄒㄧㄥ ㄑㄧˊ ㄧ" },
+            { id: 153, en: "Friday", zh: "星期五", bopomofo: "ㄒㄧㄥ ㄑㄧˊ ㄨˇ" },
+            { id: 154, en: "Sunday", zh: "星期日", bopomofo: "ㄒㄧㄥ ㄑㄧˊ ㄖˋ" },
+            { id: 155, en: "all", zh: "全部", bopomofo: "ㄑㄩㄢˊ ㄅㄨˋ" },
+            { id: 156, en: "buy", zh: "買", bopomofo: "ㄇㄞˇ" },
+            { id: 157, en: "cook", zh: "煮、廚師", bopomofo: "ㄓㄨˇ、ㄔㄨˊ ㄕ" },
+            { id: 158, en: "cry", zh: "哭泣", bopomofo: "ㄎㄨ ㄑㄧˋ" },
+            { id: 159, en: "see", zh: "看", bopomofo: "ㄎㄢˋ" },
+            { id: 160, en: "read", zh: "讀", bopomofo: "ㄉㄨˊ" },
+            { id: 161, en: "name", zh: "名字", bopomofo: "ㄇㄧㄥˊ ㄗ˙" },
+            { id: 162, en: "play", zh: "玩", bopomofo: "ㄨㄢˊ" },
+            { id: 163, en: "sing", zh: "唱", bopomofo: "ㄔㄤˋ" },
+            { id: 164, en: "swim", zh: "游泳", bopomofo: "ㄧㄡˊ ㄩㄥˇ" },
+            { id: 165, en: "dance", zh: "跳舞", bopomofo: "ㄊㄧㄠˋ ㄨˇ" },
+            { id: 166, en: "jump", zh: "跳、跳躍", bopomofo: "ㄊㄧㄠˋ、ㄊㄧㄠˋ ㄩㄝˋ" },
+            { id: 167, en: "run", zh: "跑", bopomofo: "ㄆㄠˇ" },
+            { id: 168, en: "kick", zh: "踢", bopomofo: "ㄊㄧ" },
+            { id: 169, en: "watch", zh: "看、手錶", bopomofo: "ㄎㄢˋ、ㄕㄡˇ ㄅㄧㄠˇ" },
+            { id: 170, en: "pull", zh: "拉", bopomofo: "ㄌㄚ" },
+            { id: 171, en: "push", zh: "推", bopomofo: "ㄊㄨㄟ" },
+            { id: 172, en: "open", zh: "打開", bopomofo: "ㄉㄚˇ ㄎㄞ" },
+            { id: 173, en: "want", zh: "想要", bopomofo: "ㄒㄧㄤˇ ㄧㄠˋ" },
+            { id: 174, en: "like", zh: "喜歡", bopomofo: "ㄒㄧˇ ㄏㄨㄢ" },
+            { id: 175, en: "come", zh: "來", bopomofo: "ㄌㄞˊ" },
+            { id: 176, en: "go", zh: "去", bopomofo: "ㄑㄩˋ" },
+            { id: 177, en: "eat", zh: "吃", bopomofo: "ㄔ" },
+            { id: 178, en: "drink", zh: "喝", bopomofo: "ㄏㄜ" },
+            { id: 179, en: "sleep", zh: "睡覺", bopomofo: "ㄕㄨㄟˋ ㄐㄧㄠˋ" },
+            { id: 180, en: "walk", zh: "走路", bopomofo: "ㄗㄡˇ ㄌㄨˋ" },
+            { id: 181, en: "birthday", zh: "生日", bopomofo: "ㄕㄥ ㄖˋ" },
+            { id: 182, en: "morning", zh: "早上", bopomofo: "ㄗㄠˇ ㄕㄤˋ" },
+            { id: 183, en: "afternoon", zh: "下午", bopomofo: "ㄒㄧㄚˋ ㄨˇ" },
+            { id: 184, en: "evening", zh: "傍晚", bopomofo: "ㄅㄤ ㄨㄢˇ" },
+            { id: 185, en: "night", zh: "夜晚", bopomofo: "ㄧㄝˋ ㄨㄢˇ" },
+            { id: 186, en: "sheep", zh: "綿羊", bopomofo: "ㄇㄧㄢˊ ㄧㄤˊ" },
+            { id: 187, en: "mouse", zh: "老鼠", bopomofo: "ㄌㄠˇ ㄕㄨˇ" },
+            { id: 188, en: "elephant", zh: "大象", bopomofo: "ㄉㄚˋ ㄒㄧㄤˋ" },
+            { id: 189, en: "rabbit", zh: "兔子", bopomofo: "ㄊㄨˋ ㄗ˙" },
+            { id: 190, en: "monkey", zh: "猴子", bopomofo: "ㄏㄡˊ ㄗ˙" },
+            { id: 191, en: "snake", zh: "蛇", bopomofo: "ㄕㄜˊ" },
+            { id: 192, en: "ant", zh: "螞蟻", bopomofo: "ㄇㄚˇ ㄧˇ" },
+            { id: 193, en: "bear", zh: "熊", bopomofo: "ㄒㄩㄥˊ" },
+            { id: 194, en: "cat", zh: "貓", bopomofo: "ㄇㄠ" },
+            { id: 195, en: "elf", zh: "小精靈", bopomofo: "ㄒㄧㄠˇ ㄐㄧㄥ ㄌㄧㄥˊ" },
+            { id: 196, en: "fish", zh: "魚", bopomofo: "ㄩˊ" },
+            { id: 197, en: "goat", zh: "山羊", bopomofo: "ㄕㄢ ㄧㄤˊ" },
+            { id: 198, en: "tiger", zh: "老虎", bopomofo: "ㄌㄠˇ ㄏㄨˇ" },
+            { id: 199, en: "lion", zh: "獅子", bopomofo: "ㄕ ㄗ˙" },
+            { id: 200, en: "horse", zh: "馬", bopomofo: "ㄇㄚˇ" }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const grid = document.getElementById('word-grid');
+            const synth = window.speechSynthesis;
+            let spellingQueue = [];
+            let isSpelling = false;
+
+            // Generate word cards
+            words.forEach(word => {
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                card.innerHTML = `
+                    <div class="word-header">
+                        <div class="word-info">
+                            <h2 class="english">${word.en}</h2>
+                            <p class="chinese">${word.zh}</p>
+                            <p class="bopomofo">${word.bopomofo}</p>
+                        </div>
+                        <div class="word-index">${word.id}</div>
+                    </div>
+                    <div class="buttons">
+                        <button class="btn pronounce-btn" data-word="${word.en}">發音 🔊</button>
+                        <button class="btn spell-btn" data-word="${word.en}">拼音 🔡</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            // Event listener for all buttons
+            grid.addEventListener('click', (event) => {
+                // Cancel any ongoing speech
+                synth.cancel();
+                isSpelling = false;
+                spellingQueue = [];
+
+                const target = event.target;
+                if (target.matches('.pronounce-btn')) {
+                    const wordToSpeak = target.getAttribute('data-word');
+                    speak(wordToSpeak);
+                } else if (target.matches('.spell-btn')) {
+                    const wordToSpell = target.getAttribute('data-word');
+                    spell(wordToSpell);
+                }
+            });
+
+            function speak(text) {
+                if (synth.speaking) {
+                    console.error('SpeechSynthesis is already speaking.');
+                    return;
+                }
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.9;
+                synth.speak(utterance);
+            }
+            
+            function spell(word) {
+                // Split word into letters, treating multi-character letters like '-' as one.
+                spellingQueue = word.split('').map(char => char.toLowerCase());
+                isSpelling = true;
+                speakNextLetter();
+            }
+
+            function speakNextLetter() {
+                if (!isSpelling || spellingQueue.length === 0) {
+                    isSpelling = false;
+                    return;
+                }
+                
+                const letter = spellingQueue.shift();
+                const utterance = new SpeechSynthesisUtterance(letter);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8;
+                
+                // When one letter finishes, speak the next one
+                utterance.onend = () => {
+                    if (isSpelling) {
+                       setTimeout(speakNextLetter, 100); // Small delay between letters
+                    }
+                };
+
+                synth.speak(utterance);
+            }
+        });
+    </script>
+
 </body>
 </html>
